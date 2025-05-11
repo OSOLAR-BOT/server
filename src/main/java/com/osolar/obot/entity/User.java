@@ -16,14 +16,13 @@ public class User {
 
 /*-------------------- Constructors --------------------*/
 
-    protected User() {}
-
     @Builder
-    public User(String id) {
-        this.id = id;
-    }
+    public User() {}
 
 /*-------------------- Methods --------------------*/
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
 }

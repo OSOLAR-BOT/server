@@ -5,7 +5,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.osolar.obot.entity.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -13,7 +12,6 @@ public class UserRepository {
 
     private final DynamoDBMapper dynamoDBMapper;
 
-    @Autowired
     public UserRepository(DynamoDBMapper dynamoDBMapper) {
         this.dynamoDBMapper = dynamoDBMapper;
     }
@@ -25,7 +23,7 @@ public class UserRepository {
     }
 
     // Read
-    public User findMemberById(String id) {
+    public User findUserById(String id) {
         return dynamoDBMapper.load(User.class, id);
     }
 
@@ -41,7 +39,7 @@ public class UserRepository {
     }
 
     // Delete
-    public void deleteCustomerById(String id) {
+    public void deleteUserById(String id) {
         dynamoDBMapper.delete(dynamoDBMapper.load(User.class, id));
     }
 
