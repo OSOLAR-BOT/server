@@ -32,6 +32,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // dynamodb
+    implementation "com.amazonaws:aws-java-sdk-dynamodb:1.12.563"
 }
 
 tasks.named('test') {
