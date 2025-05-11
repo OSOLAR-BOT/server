@@ -4,7 +4,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.osolar.obot.entity.User;
+import com.osolar.obot.entity.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +13,12 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.BDDAssertions.then;
 
 @ExtendWith(SpringExtension.class)
-class UserRepositoryTest {
+public class ResponseRepositoryTest {
 
     @TestConfiguration
     static class DynamoDBTestConfig {
@@ -37,13 +39,13 @@ class UserRepositoryTest {
         }
 
         @Bean
-        public UserRepository userRepository(DynamoDBMapper dynamoDBMapper) {
-            return new UserRepository(dynamoDBMapper);
+        public ResponseRepository responseRepository(DynamoDBMapper dynamoDBMapper) {
+            return new ResponseRepository(dynamoDBMapper);
         }
     }
 
     @Autowired
-    private UserRepository userRepository;
+    private ResponseRepository responseRepository;
 
     @Autowired
     private AmazonDynamoDB amazonDynamoDb;
@@ -56,17 +58,34 @@ class UserRepositoryTest {
     void CRUD_TEST() {
 
         // Create
-        User createdUser = userRepository.save(User.builder().build());
-        then(createdUser.getId()).isNotNull();
+        Response createdResponse = responseRepository.save(Response.builder()
+                .createdAt(LocalDateTime.now())
+                .output("output")
+                .isSatisfied(true)
+                .satisfactionReason("reason")
+                .build());
+        then(createdResponse.getId()).isNotNull();
 
         // Read
-        User readUser = userRepository.findUserById(createdUser.getId())
+        Response readResponse = responseRepository.findById(createdResponse.getId())
                 .orElseThrow(IllegalStateException::new);
+        then(readResponse)
+                .hasFieldOrPropertyWithValue("id", createdResponse.getId())
+                .hasFieldOrPropertyWithValue("output", "output")
+                .hasFieldOrPropertyWithValue("isSatisfied", true)
+                .hasFieldOrPropertyWithValue("satisfactionReason", "reason");
 
-        then(readUser)
-                .hasFieldOrPropertyWithValue("id", createdUser.getId());
+        // Update
+        readResponse.update("업데이트", false, "사유");
+        Response updatedInquiry = responseRepository.save(readResponse);
+        then(updatedInquiry)
+                .hasFieldOrPropertyWithValue("id", createdResponse.getId())
+                .hasFieldOrPropertyWithValue("output", "업데이트")
+                .hasFieldOrPropertyWithValue("isSatisfied", false)
+                .hasFieldOrPropertyWithValue("satisfactionReason", "사유");
 
         // Delete
-        userRepository.deleteUserById(createdUser.getId());
+        responseRepository.deleteById(createdResponse.getId());
     }
+
 }
