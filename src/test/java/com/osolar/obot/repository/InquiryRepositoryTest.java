@@ -4,7 +4,8 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.osolar.obot.entity.User;
+import com.osolar.obot.entity.Inquiry;
+import com.osolar.obot.entity.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +14,12 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.LocalDateTime;
+
 import static org.assertj.core.api.BDDAssertions.then;
 
 @ExtendWith(SpringExtension.class)
-class UserRepositoryTest {
+public class InquiryRepositoryTest {
 
     @TestConfiguration
     static class DynamoDBTestConfig {
@@ -37,13 +40,13 @@ class UserRepositoryTest {
         }
 
         @Bean
-        public UserRepository userRepository(DynamoDBMapper dynamoDBMapper) {
-            return new UserRepository(dynamoDBMapper);
+        public InquiryRepository inquiryRepository(DynamoDBMapper dynamoDBMapper) {
+            return new InquiryRepository(dynamoDBMapper);
         }
     }
 
     @Autowired
-    private UserRepository userRepository;
+    private InquiryRepository inquiryRepository;
 
     @Autowired
     private AmazonDynamoDB amazonDynamoDb;
@@ -56,17 +59,34 @@ class UserRepositoryTest {
     void CRUD_TEST() {
 
         // Create
-        User createdUser = userRepository.save(User.builder().build());
-        then(createdUser.getId()).isNotNull();
+        Inquiry createdInquiry = inquiryRepository.save(Inquiry.builder()
+                .createdAt(LocalDateTime.now())
+                .input("입력")
+                .prompt("프롬프트")
+                .searchResult("결과")
+                .build());
+        then(createdInquiry.getId()).isNotNull();
 
         // Read
-        User readUser = userRepository.findUserById(createdUser.getId())
+        Inquiry readInquiry = inquiryRepository.findById(createdInquiry.getId())
                 .orElseThrow(IllegalStateException::new);
+        then(readInquiry)
+                .hasFieldOrPropertyWithValue("id", createdInquiry.getId())
+                .hasFieldOrPropertyWithValue("input", "입력")
+                .hasFieldOrPropertyWithValue("prompt", "프롬프트")
+                .hasFieldOrPropertyWithValue("searchResult", "결과");
 
-        then(readUser)
-                .hasFieldOrPropertyWithValue("id", createdUser.getId());
+        // Update
+        readInquiry.update("입력 업데이트", "프롬프트 업데이트", "결과 업데이트");
+        Inquiry updatedInquiry = inquiryRepository.save(readInquiry);
+        then(readInquiry)
+                .hasFieldOrPropertyWithValue("id", createdInquiry.getId())
+                .hasFieldOrPropertyWithValue("input", "입력 업데이트")
+                .hasFieldOrPropertyWithValue("prompt", "프롬프트 업데이트")
+                .hasFieldOrPropertyWithValue("searchResult", "결과 업데이트");
 
         // Delete
-        userRepository.deleteUserById(createdUser.getId());
+        inquiryRepository.deleteById(createdInquiry.getId());
     }
+
 }
