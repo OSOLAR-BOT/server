@@ -1,11 +1,10 @@
 package com.osolar.obot.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.osolar.obot.entity.Session;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public class SessionRepository {
@@ -23,23 +22,15 @@ public class SessionRepository {
     }
 
     // Read
-    public Session findSessionById(String id) {
-        return dynamoDBMapper.load(Session.class, id);
-    }
-
-    // Update
-    public Session update(Session session) {
-        dynamoDBMapper.save(session,
-                new DynamoDBSaveExpression()
-                        .withExpectedEntry("id",
-                                new ExpectedAttributeValue(
-                                        new AttributeValue().withS(session.getId())
-                                )));
-        return session;
+    public Optional<Session> findById(String id) {
+        return Optional.ofNullable(dynamoDBMapper.load(Session.class, id));
     }
 
     // Delete
-    public void deleteSessionById(String id) {
-        dynamoDBMapper.delete(dynamoDBMapper.load(Session.class, id));
+    public void deleteById(String id) {
+        Session session = dynamoDBMapper.load(Session.class, id);
+        if (session != null) {
+            dynamoDBMapper.delete(session);
+        }
     }
 }
