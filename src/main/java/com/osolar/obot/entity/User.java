@@ -5,8 +5,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @DynamoDBTable(tableName = "user")
 public class User {
 
@@ -20,9 +22,5 @@ public class User {
     public User() {}
 
 /*-------------------- Methods --------------------*/
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
 }

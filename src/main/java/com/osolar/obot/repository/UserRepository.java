@@ -1,11 +1,10 @@
 package com.osolar.obot.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBSaveExpression;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.ExpectedAttributeValue;
 import com.osolar.obot.entity.User;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public class UserRepository {
@@ -23,24 +22,16 @@ public class UserRepository {
     }
 
     // Read
-    public User findUserById(String id) {
-        return dynamoDBMapper.load(User.class, id);
-    }
-
-    // Update
-    public User update(User user) {
-        dynamoDBMapper.save(user,
-                new DynamoDBSaveExpression()
-                        .withExpectedEntry("id",
-                                new ExpectedAttributeValue(
-                                        new AttributeValue().withS(user.getId())
-                                )));
-        return user;
+    public Optional<User> findUserById(String id) {
+        return Optional.ofNullable(dynamoDBMapper.load(User.class, id));
     }
 
     // Delete
     public void deleteUserById(String id) {
-        dynamoDBMapper.delete(dynamoDBMapper.load(User.class, id));
+        User user = dynamoDBMapper.load(User.class, id);
+        if (user != null) {
+            dynamoDBMapper.delete(user);
+        }
     }
 
 }
