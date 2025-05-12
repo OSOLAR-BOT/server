@@ -18,7 +18,6 @@ public class WebClientConfig {
         return builder
                 .baseUrl("https://generativelanguage.googleapis.com/v1beta") // Gemini API 기본 URL
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey) // API 키 추가
                 .build();
     }
 
