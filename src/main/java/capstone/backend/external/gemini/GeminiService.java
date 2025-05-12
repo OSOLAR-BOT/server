@@ -1,8 +1,8 @@
 package capstone.backend.external.gemini;
 
-import capstone.backend.domain.chat.entity.Chat;
-import capstone.backend.domain.chat.repository.ChatRepository;
-import capstone.backend.domain.user.jwt.JWTUtil;
+import com.osolar.obot.domain.chat.entity.Chat;
+import com.osolar.obot.domain.chat.repository.ChatRepository;
+import com.osolar.obot.domain.user.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,8 +36,8 @@ public class GeminiService {
      * @param prompt 요청 프롬트프 내용
      * @param emitter
      * @param access
-     1. 요청 프롬프트 기반으로 응답 스트리밍 전송
-     2. 응답 스트리밍 합본 비동기로 mongoDB에 저장
+    1. 요청 프롬프트 기반으로 응답 스트리밍 전송
+    2. 응답 스트리밍 합본 비동기로 mongoDB에 저장
      */
     public void streamResponseByPrompt(String prompt, SseEmitter emitter, String access) {
         log.info("[GeminiService - streamResponseByPrompt]");
