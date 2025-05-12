@@ -3,6 +3,7 @@ package capstone.backend.external.gemini;
 import capstone.backend.domain.chat.entity.Chat;
 import capstone.backend.domain.chat.repository.ChatRepository;
 import capstone.backend.domain.user.jwt.JWTUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class GeminiService {
 
     private final WebClient webClient;
@@ -29,12 +31,14 @@ public class GeminiService {
     @Value("${external.gemini.api-url}")
     private String apiUrl;
 
-    public GeminiService(WebClient.Builder webClientBuilder, ChatRepository chatRepository, JWTUtil jwtUtil) {
-        this.webClient = webClientBuilder.build();
-        this.chatRepository = chatRepository;
-        this.jwtUtil = jwtUtil;
-    }
-
+    /**
+     *
+     * @param prompt 요청 프롬트프 내용
+     * @param emitter
+     * @param access
+     1. 요청 프롬프트 기반으로 응답 스트리밍 전송
+     2. 응답 스트리밍 합본 비동기로 mongoDB에 저장
+     */
     public void streamResponseByPrompt(String prompt, SseEmitter emitter, String access) {
         log.info("[GeminiService - streamResponseByPrompt]");
         Map<String, Object> requestBody = Map.of(
@@ -51,7 +55,7 @@ public class GeminiService {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(requestBody)
                 .retrieve()
-                .bodyToFlux(String.class)  // Flux를 통해 스트리밍 데이터를 받는다.
+                .bodyToFlux(String.class)  // Flux를 통해 스트리밍 데이터를 수신
                 .doOnNext(chunk -> {
                     try {
                         String token = chunk.trim();
@@ -60,11 +64,11 @@ public class GeminiService {
                             if (parts.length > 1) {
                                 String text = parts[1].trim();
                                 answer.append(text);
-                                emitter.send(SseEmitter.event().data(text));  // 클라이언트로 실시간 스트리밍
+                                emitter.send(SseEmitter.event().data(text));  // 클라이언트로 실시간 스트리밍 송신
                             }
                         }
                     } catch (Exception e) {
-                        emitter.completeWithError(e);  // 에러가 발생하면 스트리밍 종료
+                        emitter.completeWithError(e);  // 에러가 발생하면 스트리밍 송신 종료
                     }
                 })
                 .doOnComplete(() -> {
