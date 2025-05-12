@@ -32,7 +32,7 @@ public class GeminiService {
     private String apiUrl;
 
     /**
-     *
+     *g
      * @param prompt 요청 프롬트프 내용
      * @param emitter
      * @param access
