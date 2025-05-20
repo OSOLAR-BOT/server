@@ -1,8 +1,18 @@
 package com.osolar.obot.external.gemini;
 
+import com.osolar.obot.common.apiPayload.failure.customException.UserException;
+import com.osolar.obot.common.apiPayload.failure.customExceptionStatus.UserExceptionStatus;
+import com.osolar.obot.domain.chat.dto.response.SessionResponse;
 import com.osolar.obot.domain.chat.entity.Chat;
 import com.osolar.obot.domain.chat.repository.ChatRepository;
+import com.osolar.obot.domain.inquiry.entity.Inquiry;
+import com.osolar.obot.domain.inquiry.entity.repository.InquiryRepository;
+import com.osolar.obot.domain.user.entity.SessionStatus;
+import com.osolar.obot.domain.user.entity.User;
+import com.osolar.obot.domain.user.entity.UserSession;
 import com.osolar.obot.domain.user.jwt.JWTUtil;
+import com.osolar.obot.domain.user.repository.UserRepository;
+import com.osolar.obot.domain.user.repository.UserSessionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +32,9 @@ import java.util.Map;
 public class GeminiService {
 
     private final WebClient webClient;
-    private final ChatRepository chatRepository;
+    private final UserRepository userRepository;
+    private final UserSessionRepository userSessionRepository;
+    private final InquiryRepository inquiryRepository;
     private final JWTUtil jwtUtil;
 
     @Value("${external.gemini.api-key}")
@@ -30,6 +42,16 @@ public class GeminiService {
 
     @Value("${external.gemini.api-url}")
     private String apiUrl;
+
+    public SessionResponse createChatSession(String userId){
+        UserSession userSession = UserSession.builder()
+                .userId(userId)
+                .sessionStatus(SessionStatus.IN_PROGRESS)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        return SessionResponse.toDTO(userSessionRepository.save(userSession));
+    }
 
     /**
      *g
@@ -94,12 +116,17 @@ public class GeminiService {
     private Mono<Void> saveToDatabase(String prompt, String finalAnswer, String access) {
         return Mono.fromRunnable(() -> {
             try {
-                chatRepository.save(
-                        Chat.builder()
-                                .username(jwtUtil.getUsername(access))
-                                .question(prompt)
-                                .answer(finalAnswer)
+                User user = userRepository.findByUsername(jwtUtil.getUsername(access))
+                            .orElseThrow(UserException.UsernameNotExistException::new);
+                UserSession session = userSessionRepository.findByUserId(user.getId())
+                            .orElseThrow(UserException.UserSessionNotExistException::new);
+
+                inquiryRepository.save(
+                        Inquiry.builder()
+                                .sessionId(session.getId())
                                 .createdAt(LocalDateTime.now())
+                                .prompt(prompt)
+                                .output(finalAnswer)
                                 .build()
                 );
             } catch (Exception e) {
@@ -107,5 +134,4 @@ public class GeminiService {
             }
         });
     }
-
 }

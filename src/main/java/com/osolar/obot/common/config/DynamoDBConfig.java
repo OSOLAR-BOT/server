@@ -1,9 +1,9 @@
-package com.osolar.obot.config;
+package com.osolar.obot.common.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -28,6 +28,12 @@ public class DynamoDBConfig {
     @Value("${aws.region}")
     private String region;
 
+    @Value("${aws.access-key}")
+    private String accessKey;
+
+    @Value("${aws.secret-key}")
+    private String secretKey;
+
     @Bean(name = "dynamoDBMapper")
     public DynamoDBMapper dynamoDBMapper() {
         DynamoDBMapperConfig config = DynamoDBMapperConfig.builder()
@@ -44,6 +50,19 @@ public class DynamoDBConfig {
         return AmazonDynamoDBClientBuilder.standard()
                 .withRegion(Regions.fromName(region)) // AWS Region
                 .withCredentials(DefaultAWSCredentialsProviderChain.getInstance()) // IAM Role
+                .build();
+    }
+
+    @Bean(name = "amazonDynamoDBWithKey")
+    public AmazonDynamoDB amazonDynamoDBWithKey() {
+        AWSStaticCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(
+                new BasicAWSCredentials(accessKey, secretKey));
+        AwsClientBuilder.EndpointConfiguration endpointConfiguration =
+                new AwsClientBuilder.EndpointConfiguration(endPoint, region);
+
+        return AmazonDynamoDBClientBuilder.standard()
+                .withCredentials(credentialsProvider)
+                .withEndpointConfiguration(endpointConfiguration)
                 .build();
     }
 

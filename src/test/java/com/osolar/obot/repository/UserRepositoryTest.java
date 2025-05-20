@@ -4,7 +4,8 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.osolar.obot.entity.User;
+import com.osolar.obot.domain.user.repository.UserRepository;
+import com.osolar.obot.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -60,13 +61,13 @@ class UserRepositoryTest {
         then(createdUser.getId()).isNotNull();
 
         // Read
-        User readUser = userRepository.findUserById(createdUser.getId())
+        User readUser = userRepository.findById(createdUser.getId())
                 .orElseThrow(IllegalStateException::new);
 
         then(readUser)
                 .hasFieldOrPropertyWithValue("id", createdUser.getId());
 
         // Delete
-        userRepository.deleteUserById(createdUser.getId());
+        userRepository.deleteById(createdUser.getId());
     }
 }
