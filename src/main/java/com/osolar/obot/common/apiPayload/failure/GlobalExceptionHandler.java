@@ -5,6 +5,7 @@ import com.osolar.obot.common.apiPayload.failure.customException.UserException;
 import com.osolar.obot.common.apiPayload.failure.customExceptionStatus.JWTExceptionStatus;
 import com.osolar.obot.common.apiPayload.failure.customExceptionStatus.UserExceptionStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,6 +13,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    // [General]
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionApiResponse> handleException(Exception exception) {
+        exception.printStackTrace();
+        log.error("Exception has occurred: {}", exception.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        new ExceptionApiResponse(false, "500", "서버 내부 오류")
+                );
+    }
+
     // [JWT]
     @ExceptionHandler(JWTException.TokenNullException.class)
     public ResponseEntity<ExceptionApiResponse> handleException(JWTException.TokenNullException e){

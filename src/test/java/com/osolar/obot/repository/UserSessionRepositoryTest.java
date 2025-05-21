@@ -4,8 +4,9 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.osolar.obot.entity.Session;
-import com.osolar.obot.entity.enums.SessionStatus;
+import com.osolar.obot.domain.user.repository.UserSessionRepository;
+import com.osolar.obot.domain.user.entity.UserSession;
+import com.osolar.obot.domain.user.entity.SessionStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.BDDAssertions.then;
 
 @ExtendWith(SpringExtension.class)
-class SessionRepositoryTest {
+class UserSessionRepositoryTest {
 
     @TestConfiguration
     static class DynamoDBTestConfig {
@@ -40,13 +41,13 @@ class SessionRepositoryTest {
         }
 
         @Bean
-        public SessionRepository sessionRepository(DynamoDBMapper dynamoDBMapper) {
-            return new SessionRepository(dynamoDBMapper);
+        public UserSessionRepository sessionRepository(DynamoDBMapper dynamoDBMapper) {
+            return new UserSessionRepository(dynamoDBMapper);
         }
     }
 
     @Autowired
-    private SessionRepository sessionRepository;
+    private UserSessionRepository userSessionRepository;
 
     @Autowired
     private AmazonDynamoDB amazonDynamoDb;
@@ -59,27 +60,33 @@ class SessionRepositoryTest {
     void CRUD_TEST() {
 
         // Create
-        Session createdSession = sessionRepository.save(Session.builder()
+        UserSession createdUserSession = userSessionRepository.save(UserSession.builder()
+                .userId("1234")
                 .sessionStatus(SessionStatus.IN_PROGRESS)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build());
-        then(createdSession.getId()).isNotNull();
+        then(createdUserSession.getId()).isNotNull();
 
         // Read
-        Session readSession = sessionRepository.findById(createdSession.getId())
+        UserSession readUserSession = userSessionRepository.findById(createdUserSession.getId())
                 .orElseThrow(IllegalStateException::new);
-        then(readSession)
-                .hasFieldOrPropertyWithValue("id", createdSession.getId())
+        then(readUserSession)
+                .hasFieldOrPropertyWithValue("id", createdUserSession.getId())
+                .hasFieldOrPropertyWithValue("sessionStatus", SessionStatus.IN_PROGRESS);
+
+        UserSession foundUserSession = userSessionRepository.findByUserId("1234").orElseThrow();
+        then(foundUserSession)
+                .hasFieldOrPropertyWithValue("id", createdUserSession.getId())
                 .hasFieldOrPropertyWithValue("sessionStatus", SessionStatus.IN_PROGRESS);
 
         // Update
-        readSession.update(SessionStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now());
-        Session updatedSession = sessionRepository.save(readSession);
-        then(updatedSession)
+        readUserSession.update(SessionStatus.COMPLETED, LocalDateTime.now(), LocalDateTime.now());
+        UserSession updatedUserSession = userSessionRepository.save(readUserSession);
+        then(updatedUserSession)
                 .hasFieldOrPropertyWithValue("sessionStatus", SessionStatus.COMPLETED);
 
         // Delete
-        sessionRepository.deleteById(createdSession.getId());
+        userSessionRepository.deleteById(createdUserSession.getId());
     }
 }

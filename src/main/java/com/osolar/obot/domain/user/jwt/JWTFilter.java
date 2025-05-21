@@ -40,9 +40,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 토큰 추출 (헤더 또는 SSE 경로인 경우 쿼리 파라미터)
         String access = request.getHeader("access");
-        if (access == null && requestURI.equals("/api/chat/stream")) {
+        if (access == null) {
             access = request.getParameter("access");
-            System.out.println("인증했다고 시발아");
         }
 
         // 토큰 검증

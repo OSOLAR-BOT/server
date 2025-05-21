@@ -5,5 +5,6 @@ public class UserException {
     public static class PasswordNotValidException extends RuntimeException{}
     public static class TokenNotValidException extends RuntimeException{}
     public static class UsernameNotExistException extends RuntimeException{}
+    public static class UserSessionNotExistException extends RuntimeException{}
 }
 

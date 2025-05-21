@@ -4,8 +4,8 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.osolar.obot.entity.Inquiry;
-import com.osolar.obot.entity.Response;
+import com.osolar.obot.domain.inquiry.entity.Inquiry;
+import com.osolar.obot.domain.inquiry.entity.repository.InquiryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -61,9 +61,8 @@ public class InquiryRepositoryTest {
         // Create
         Inquiry createdInquiry = inquiryRepository.save(Inquiry.builder()
                 .createdAt(LocalDateTime.now())
-                .input("입력")
                 .prompt("프롬프트")
-                .searchResult("결과")
+                .output("결과")
                 .build());
         then(createdInquiry.getId()).isNotNull();
 
@@ -72,18 +71,8 @@ public class InquiryRepositoryTest {
                 .orElseThrow(IllegalStateException::new);
         then(readInquiry)
                 .hasFieldOrPropertyWithValue("id", createdInquiry.getId())
-                .hasFieldOrPropertyWithValue("input", "입력")
                 .hasFieldOrPropertyWithValue("prompt", "프롬프트")
-                .hasFieldOrPropertyWithValue("searchResult", "결과");
-
-        // Update
-        readInquiry.update("입력 업데이트", "프롬프트 업데이트", "결과 업데이트");
-        Inquiry updatedInquiry = inquiryRepository.save(readInquiry);
-        then(readInquiry)
-                .hasFieldOrPropertyWithValue("id", createdInquiry.getId())
-                .hasFieldOrPropertyWithValue("input", "입력 업데이트")
-                .hasFieldOrPropertyWithValue("prompt", "프롬프트 업데이트")
-                .hasFieldOrPropertyWithValue("searchResult", "결과 업데이트");
+                .hasFieldOrPropertyWithValue("output", "결과");
 
         // Delete
         inquiryRepository.deleteById(createdInquiry.getId());

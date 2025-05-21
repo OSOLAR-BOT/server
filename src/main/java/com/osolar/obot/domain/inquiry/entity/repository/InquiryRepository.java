@@ -1,7 +1,7 @@
-package com.osolar.obot.repository;
+package com.osolar.obot.domain.inquiry.entity.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.osolar.obot.entity.Inquiry;
+import com.osolar.obot.domain.inquiry.entity.Inquiry;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
