@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.osolar.obot.domain.inquiry.entity.Inquiry;
 import com.osolar.obot.domain.inquiry.entity.repository.InquiryRepository;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+@Tag("Local")
 @ExtendWith(SpringExtension.class)
 public class InquiryRepositoryTest {
 

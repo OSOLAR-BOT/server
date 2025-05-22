@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.osolar.obot.domain.user.repository.UserRepository;
 import com.osolar.obot.domain.user.entity.User;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+@Tag("Local")
 @ExtendWith(SpringExtension.class)
 class UserRepositoryTest {
 
