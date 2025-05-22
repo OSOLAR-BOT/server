@@ -1,10 +1,7 @@
 package com.osolar.obot.external.gemini;
 
 import com.osolar.obot.common.apiPayload.failure.customException.UserException;
-import com.osolar.obot.common.apiPayload.failure.customExceptionStatus.UserExceptionStatus;
-import com.osolar.obot.domain.chat.dto.response.SessionResponse;
-import com.osolar.obot.domain.chat.entity.Chat;
-import com.osolar.obot.domain.chat.repository.ChatRepository;
+import com.osolar.obot.domain.inquiry.entity.dto.response.SessionResponse;
 import com.osolar.obot.domain.inquiry.entity.Inquiry;
 import com.osolar.obot.domain.inquiry.entity.repository.InquiryRepository;
 import com.osolar.obot.domain.user.entity.SessionStatus;
@@ -54,12 +51,11 @@ public class GeminiService {
     }
 
     /**
-     *g
-     * @param prompt 요청 프롬트프 내용
+     * g
+     *
+     * @param prompt  요청 프롬트프 내용
      * @param emitter
      * @param access
-    1. 요청 프롬프트 기반으로 응답 스트리밍 전송
-    2. 응답 스트리밍 합본 비동기로 mongoDB에 저장
      */
     public void streamResponseByPrompt(String prompt, SseEmitter emitter, String access) {
         log.info("[GeminiService - streamResponseByPrompt]");
@@ -115,23 +111,19 @@ public class GeminiService {
 
     private Mono<Void> saveToDatabase(String prompt, String finalAnswer, String access) {
         return Mono.fromRunnable(() -> {
-            try {
-                User user = userRepository.findByUsername(jwtUtil.getUsername(access))
-                            .orElseThrow(UserException.UsernameNotExistException::new);
-                UserSession session = userSessionRepository.findByUserId(user.getId())
-                            .orElseThrow(UserException.UserSessionNotExistException::new);
+            User user = userRepository.findByUsername(jwtUtil.getUsername(access))
+                        .orElseThrow(UserException.UsernameNotExistException::new);
+            UserSession session = userSessionRepository.findByUserId(user.getId())
+                        .orElseThrow(UserException.UserSessionNotExistException::new);
 
-                inquiryRepository.save(
-                        Inquiry.builder()
-                                .sessionId(session.getId())
-                                .createdAt(LocalDateTime.now())
-                                .prompt(prompt)
-                                .output(finalAnswer)
-                                .build()
-                );
-            } catch (Exception e) {
-                log.error("Error saving content", e);
-            }
+            inquiryRepository.save(
+                    Inquiry.builder()
+                            .sessionId(session.getId())
+                            .createdAt(LocalDateTime.now())
+                            .prompt(prompt)
+                            .output(finalAnswer)
+                            .build()
+            );
         });
     }
 }
