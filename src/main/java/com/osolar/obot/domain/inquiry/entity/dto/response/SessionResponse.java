@@ -1,4 +1,4 @@
-package com.osolar.obot.domain.chat.dto.response;
+package com.osolar.obot.domain.inquiry.entity.dto.response;
 
 import com.osolar.obot.domain.user.entity.SessionStatus;
 import com.osolar.obot.domain.user.entity.UserSession;

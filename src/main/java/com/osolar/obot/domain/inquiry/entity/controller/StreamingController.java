@@ -1,7 +1,7 @@
-package com.osolar.obot.domain.chat.controller;
+package com.osolar.obot.domain.inquiry.entity.controller;
 
 import com.osolar.obot.common.apiPayload.success.SuccessApiResponse;
-import com.osolar.obot.domain.chat.dto.response.SessionResponse;
+import com.osolar.obot.domain.inquiry.entity.dto.response.SessionResponse;
 import com.osolar.obot.external.gemini.GeminiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,8 @@ public class StreamingController {
     @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamResponseByPrompt(
             @RequestParam String prompt,
-            @RequestParam String access) {
+            @RequestParam String access
+    ) {
         log.info("[StreamingController - streamResponse]");
 
         SseEmitter emitter = new SseEmitter(180_000L); // 3분으로 설정
