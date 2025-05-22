@@ -1,7 +1,7 @@
 package com.osolar.obot.common.apiPayload.success;
 
 import com.osolar.obot.common.apiPayload.BaseApiResponse;
-import com.osolar.obot.domain.chat.dto.response.SessionResponse;
+import com.osolar.obot.domain.inquiry.entity.dto.response.SessionResponse;
 import com.osolar.obot.domain.user.dto.response.LoginResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

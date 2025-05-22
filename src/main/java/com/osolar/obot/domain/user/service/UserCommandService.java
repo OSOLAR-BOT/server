@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class UserCommandService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

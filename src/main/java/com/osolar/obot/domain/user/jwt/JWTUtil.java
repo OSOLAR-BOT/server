@@ -1,8 +1,12 @@
 package com.osolar.obot.domain.user.jwt;
 
 
+import com.osolar.obot.common.apiPayload.failure.customException.UserException;
+import com.osolar.obot.common.apiPayload.failure.customExceptionStatus.UserExceptionStatus;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
