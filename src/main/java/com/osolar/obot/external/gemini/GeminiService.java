@@ -1,10 +1,7 @@
 package com.osolar.obot.external.gemini;
 
 import com.osolar.obot.common.apiPayload.failure.customException.UserException;
-import com.osolar.obot.common.apiPayload.failure.customExceptionStatus.UserExceptionStatus;
 import com.osolar.obot.domain.chat.dto.response.SessionResponse;
-import com.osolar.obot.domain.chat.entity.Chat;
-import com.osolar.obot.domain.chat.repository.ChatRepository;
 import com.osolar.obot.domain.inquiry.entity.Inquiry;
 import com.osolar.obot.domain.inquiry.entity.repository.InquiryRepository;
 import com.osolar.obot.domain.user.entity.SessionStatus;
