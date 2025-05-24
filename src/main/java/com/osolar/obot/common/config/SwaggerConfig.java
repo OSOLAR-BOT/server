@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI SpotAPI() {
+    public OpenAPI OSolarAPI() {
 
         Info info = new Info()
                 .title("OSolar-bot API")
