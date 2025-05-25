@@ -111,5 +111,6 @@ public class StreamingService {
             .answer(savedChat.getAnswer())
             .createdAt(savedChat.getCreatedAt())
             .build();
+
     }
 }

@@ -59,6 +59,7 @@ public class UserCommandService {
         stringRedisTemplate.opsForValue().set(redisRefreshKey, refreshToken, 1, TimeUnit.DAYS);
 
         httpServletResponse.setHeader("access", accessToken);
+        log.info("Access Token: "+ accessToken);
         httpServletResponse.setHeader("Set-Cookie", getResponseCookie(refreshToken));
 
 

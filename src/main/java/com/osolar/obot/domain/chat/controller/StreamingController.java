@@ -5,7 +5,7 @@ import com.osolar.obot.domain.chat.dto.request.ChatUserRequest;
 import com.osolar.obot.domain.chat.dto.response.ChatUserResponse;
 import com.osolar.obot.domain.chat.dto.response.SessionResponse;
 import com.osolar.obot.domain.chat.service.StreamingService;
-import com.osolar.obot.external.gemini.GeminiService;
+//import com.osolar.obot.external.gemini.GeminiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/api")
 public class StreamingController {
 
-    private final GeminiService geminiService;
+    //private final GeminiService geminiService;
     private final StreamingService streamingService;
 
     @PostMapping("/chat/session")
@@ -36,7 +36,7 @@ public class StreamingController {
         log.info("[StreamingController - streamResponse]");
 
         SseEmitter emitter = new SseEmitter(180_000L); // 3분으로 설정
-        geminiService.streamResponseByPrompt(prompt, emitter, access);
+        //geminiService.streamResponseByPrompt(prompt, emitter, access);
 
         return emitter;
     }
