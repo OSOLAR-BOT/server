@@ -27,12 +27,6 @@ public class Inquiry {
     private LocalDateTime createdAt;
 
     @DynamoDBAttribute
-    private String prompt;
-
-    @DynamoDBAttribute
-    private String output;
-
-    @DynamoDBAttribute
     @DynamoDBTyped(DynamoDBMapperFieldModel.DynamoDBAttributeType.BOOL)
     private Boolean isSatisfied;
 
@@ -47,15 +41,11 @@ public class Inquiry {
     public Inquiry(
             String sessionId,
             LocalDateTime createdAt,
-            String prompt,
-            String output,
             Boolean isSatisfied,
             String satisfactionReason
     ) {
         this.sessionId = sessionId;
         this.createdAt = createdAt;
-        this.prompt = prompt;
-        this.output = output;
         this.isSatisfied = isSatisfied;
         this.satisfactionReason = satisfactionReason;
     }
