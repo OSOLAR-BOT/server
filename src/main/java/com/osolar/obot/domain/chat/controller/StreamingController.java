@@ -47,6 +47,7 @@ public class StreamingController {
         return emitter;
     }
 
+    @Operation(summary = "[WebClient] 챗봇 응답 반환 API")
     @PostMapping("/chat/basic")
     public SuccessApiResponse<ChatUserResponse> getBasicResponse(
         @RequestParam String sessionId, @RequestBody ChatUserRequest chatUserRequest

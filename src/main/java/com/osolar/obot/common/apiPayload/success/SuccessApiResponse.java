@@ -40,4 +40,10 @@ public class SuccessApiResponse <T> extends BaseApiResponse {
         return new SuccessApiResponse<>(true, HttpStatus.CREATED.toString(),
             "챗봇 응답 생성 성공", chatUserResponse);
     }
+
+    // [INQUIRY]
+    public static SuccessApiResponse<Void> GetInquiry() {
+        return new SuccessApiResponse<>(true, HttpStatus.CREATED.toString()
+        , "사용자 만족도 저장 성공", null);
+    }
 }
