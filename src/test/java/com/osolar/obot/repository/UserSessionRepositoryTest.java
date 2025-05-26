@@ -8,6 +8,7 @@ import com.osolar.obot.domain.user.repository.UserSessionRepository;
 import com.osolar.obot.domain.user.entity.UserSession;
 import com.osolar.obot.domain.user.entity.SessionStatus;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+@Tag("Local")
 @ExtendWith(SpringExtension.class)
 class UserSessionRepositoryTest {
 

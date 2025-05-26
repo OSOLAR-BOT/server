@@ -39,14 +39,51 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         // 토큰 추출 (헤더 또는 SSE 경로인 경우 쿼리 파라미터)
-        String access = request.getHeader("access");
-        if (access == null) {
-            access = request.getParameter("access");
-        }
+        String access = resolveToken(request, "Bearer");
 
         // 토큰 검증
-        validateToken(access);
+        if (isValidToken(access)) {
+            // 토큰 검증 후 사용자 인증 객체 생성
+            authenticateUser(request, access);
+        }
 
+        // 일반 요청 처리
+        filterChain.doFilter(request, response);
+    }
+
+    private String resolveToken(HttpServletRequest request, String prefix) {
+        String access = request.getHeader("Authorization");
+        if (access == null || !access.startsWith(prefix)) {
+            return request.getParameter("access"); // SSE 요청에서 사용
+        }
+        return access.substring(prefix.length()).trim();
+    }
+
+    private boolean isValidToken(String access) {
+        // access 토큰이 존재하지 않는 경우 검증 skip 후 false 반환
+        // access 토큰이 존재하는 경우 검증 결과 반환
+        return access != null && validateToken(access);
+    }
+
+    private boolean validateToken(String token) {
+
+        // validation1 - token expire
+        if (jwtUtil.isExpired(token)) {
+            log.error("Token expired");
+            throw new JWTException.TokenExpiredException();
+        }
+
+        // validation2 - token type for access
+        String tokenType = jwtUtil.getCategory(token);
+        if (!tokenType.equals("access")) {
+            log.error("Invalid token type: {}", tokenType);
+            throw new JWTException.TokenTypeNotAccessException();
+        }
+
+        return true;
+    }
+
+    private void authenticateUser(HttpServletRequest request, String access) {
         // 사용자 정보 추출
         String username = jwtUtil.getUsername(access);
         String role = jwtUtil.getRole(access);
@@ -67,36 +104,6 @@ public class JWTFilter extends OncePerRequestFilter {
         if (role.equals("ROLE_ADMIN")) {
             validateAdminPermissions(request);
         }
-
-        // SSE 요청인 경우 여기서 필터 체인 종료 (후속 보안 검증 방지)
-        if (requestURI.equals("/api/chat/stream")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // 일반 요청 처리
-        filterChain.doFilter(request, response);
-    }
-
-    private void validateToken(String token) {
-        // validation1 - token null
-        if (token == null) {
-            log.error("Token is null");
-            throw new JWTException.TokenNullException();
-        }
-
-        // validation2 - token expire
-        if (jwtUtil.isExpired(token)) {
-            log.error("Token expired");
-            throw new JWTException.TokenExpiredException();
-        }
-
-        // validation3 - token type for access
-        String tokenType = jwtUtil.getCategory(token);
-        if (!tokenType.equals("access")) {
-            log.error("Invalid token type: {}", tokenType);
-            throw new JWTException.TokenTypeNotAccessException();
-        }
     }
 
     // ADMIN 전용 검증 메서드 (추가 확장 가능)
@@ -110,5 +117,9 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         // 추후 ADMIN 관련 추가 검증 로직 구현 가능
+    }
+
+    private static boolean isSSERequest(String requestURI) {
+        return requestURI.equals("/api/chat/stream");
     }
 }

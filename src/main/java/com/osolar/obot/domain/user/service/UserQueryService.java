@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class UserQueryService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

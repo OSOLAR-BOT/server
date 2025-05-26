@@ -4,7 +4,7 @@ import com.osolar.obot.common.apiPayload.failure.customException.UserException;
 import com.osolar.obot.domain.chat.dto.request.ChatApiRequest;
 import com.osolar.obot.domain.chat.dto.request.ChatApiRequest.UserData;
 import com.osolar.obot.domain.chat.dto.request.ChatUserRequest;
-import com.osolar.obot.domain.chat.dto.response.ChatApiResponse;
+import com.osolar.obot.domain.chat.dto.response.SessionResponse.ChatApiResponse;
 import com.osolar.obot.domain.chat.dto.response.ChatUserResponse;
 import com.osolar.obot.domain.chat.dto.response.SessionResponse;
 import com.osolar.obot.domain.chat.entity.Chat;

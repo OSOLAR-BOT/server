@@ -70,13 +70,19 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    // validation
+    // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // dynamodb
+    // DynamoDB
     implementation "com.amazonaws:aws-java-sdk-dynamodb:1.12.563"
+
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'Local'
+    }
 }

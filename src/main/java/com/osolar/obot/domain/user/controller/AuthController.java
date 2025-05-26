@@ -5,6 +5,8 @@ import com.osolar.obot.domain.user.dto.request.LoginRequest;
 import com.osolar.obot.domain.user.dto.request.RegisterRequest;
 import com.osolar.obot.domain.user.dto.response.LoginResponse;
 import com.osolar.obot.domain.user.service.UserApplicationService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Tag(name = "회원 관리 API", description = "회원 관리 API")
 public class AuthController {
     private final UserApplicationService userApplicationService;
+
     // 회원가입
+    @Operation(summary = "[회원 관리] 회원가입 API")
     @PostMapping("/register")
     public SuccessApiResponse<Void> register(
             @RequestBody RegisterRequest request)
@@ -33,6 +38,7 @@ public class AuthController {
     }
 
     // 로그인
+    @Operation(summary = "[회원 관리] 로그인 API")
     @PostMapping("/login")
     public SuccessApiResponse<LoginResponse> login(
             @RequestBody LoginRequest request,
@@ -44,6 +50,7 @@ public class AuthController {
     }
 
     // 토큰 재발급
+    @Operation(summary = "[회원 관리] 토큰 재발급 API")
     @PostMapping("/reissue")
     public SuccessApiResponse<Void> reissueToken(
             HttpServletRequest httpServletRequest,
