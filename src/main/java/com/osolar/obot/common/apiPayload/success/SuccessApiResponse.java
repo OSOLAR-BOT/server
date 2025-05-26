@@ -1,7 +1,8 @@
 package com.osolar.obot.common.apiPayload.success;
 
 import com.osolar.obot.common.apiPayload.BaseApiResponse;
-import com.osolar.obot.domain.inquiry.entity.dto.response.SessionResponse;
+import com.osolar.obot.domain.chat.dto.response.ChatUserResponse;
+import com.osolar.obot.domain.chat.dto.response.SessionResponse;
 import com.osolar.obot.domain.user.dto.response.LoginResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -28,8 +29,15 @@ public class SuccessApiResponse <T> extends BaseApiResponse {
         return new SuccessApiResponse<>(true, HttpStatus.OK.toString()
                 , "토큰 재발급 성공", null);
     }
+
+    // [CHAT]
     public static SuccessApiResponse<SessionResponse> CreateSession(SessionResponse sessionResponse) {
         return new SuccessApiResponse<>(true, HttpStatus.CREATED.toString()
                 , "채팅 세션 생성 성공", sessionResponse);
+    }
+
+    public static SuccessApiResponse<ChatUserResponse> GetResponse(ChatUserResponse chatUserResponse) {
+        return new SuccessApiResponse<>(true, HttpStatus.CREATED.toString(),
+            "챗봇 응답 생성 성공", chatUserResponse);
     }
 }

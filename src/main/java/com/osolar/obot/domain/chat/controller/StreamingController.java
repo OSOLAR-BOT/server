@@ -1,10 +1,13 @@
-package com.osolar.obot.domain.inquiry.entity.controller;
+package com.osolar.obot.domain.chat.controller;
 
 import com.osolar.obot.common.apiPayload.success.SuccessApiResponse;
-import com.osolar.obot.domain.inquiry.entity.dto.response.SessionResponse;
-import com.osolar.obot.external.gemini.GeminiService;
+import com.osolar.obot.domain.chat.dto.response.SessionResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.osolar.obot.domain.chat.dto.request.ChatUserRequest;
+import com.osolar.obot.domain.chat.dto.response.ChatUserResponse;
+import com.osolar.obot.domain.chat.service.StreamingService;
+//import com.osolar.obot.external.gemini.GeminiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -18,14 +21,15 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Tag(name = "챗봇 응답 스트리밍 API", description = "챗봇 응답 스트리밍 API")
 public class StreamingController {
 
-    private final GeminiService geminiService;
+    //private final GeminiService geminiService;
+    private final StreamingService streamingService;
 
     @Operation(summary = "[세션 관리] 챗봇 세션 생성 API")
     @PostMapping("/chat/session")
     public SuccessApiResponse<SessionResponse> createChatSession(
             @RequestParam String userId
     ) {
-        SessionResponse sessionResponse = geminiService.createChatSession(userId);
+        SessionResponse sessionResponse = streamingService.createChatSession(userId);
         return SuccessApiResponse.CreateSession(sessionResponse);
     }
 
@@ -38,8 +42,18 @@ public class StreamingController {
         log.info("[StreamingController - streamResponse]");
 
         SseEmitter emitter = new SseEmitter(180_000L); // 3분으로 설정
-        geminiService.streamResponseByPrompt(prompt, emitter, access);
+        //geminiService.streamResponseByPrompt(prompt, emitter, access);
 
         return emitter;
     }
+
+    @PostMapping("/chat/basic")
+    public SuccessApiResponse<ChatUserResponse> getBasicResponse(
+        @RequestParam String sessionId, @RequestBody ChatUserRequest chatUserRequest
+    ) {
+        ChatUserResponse chatUserResponse = streamingService.getBasicResponse(sessionId, chatUserRequest);
+        return SuccessApiResponse.GetResponse(chatUserResponse);
+    }
+
+
 }
