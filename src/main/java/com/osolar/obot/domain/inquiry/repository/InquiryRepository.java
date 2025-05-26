@@ -1,4 +1,4 @@
-package com.osolar.obot.domain.inquiry.entity.repository;
+package com.osolar.obot.domain.inquiry.repository;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.osolar.obot.domain.inquiry.entity.Inquiry;
