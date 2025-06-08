@@ -40,10 +40,15 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
     }
 
-    public String createJwt(String category, String username, String role, Long expiredMs) {
+    public String getUserId(String token){
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", String.class);
+    }
+
+    public String createJwt(String category, String userId, String username, String role, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category)
+                .claim("id", userId)
                 .claim("username", username)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))

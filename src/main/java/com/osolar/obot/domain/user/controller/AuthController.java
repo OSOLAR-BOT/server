@@ -1,9 +1,11 @@
 package com.osolar.obot.domain.user.controller;
 
+import com.osolar.obot.common.annotation.CurrentUser;
 import com.osolar.obot.common.apiPayload.success.SuccessApiResponse;
 import com.osolar.obot.domain.user.dto.request.LoginRequest;
 import com.osolar.obot.domain.user.dto.request.RegisterRequest;
 import com.osolar.obot.domain.user.dto.response.LoginResponse;
+import com.osolar.obot.domain.user.entity.User;
 import com.osolar.obot.domain.user.service.UserApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,10 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j

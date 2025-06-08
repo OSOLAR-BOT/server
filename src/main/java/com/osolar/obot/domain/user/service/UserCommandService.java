@@ -51,8 +51,8 @@ public class UserCommandService {
         log.info("[UserCommandService - issueToken]");
         User user = userRepository.findByUsername(username).orElseThrow(UserException.UsernameNotExistException::new);
 
-        String accessToken = jwtUtil.createJwt("access", user.getUsername(), user.getRole(), 10 * 60 * 1000L); // 10분
-        String refreshToken = jwtUtil.createJwt("refresh", user.getUsername(), user.getRole(), 24 * 60 * 60 * 1000L); // 1일
+        String accessToken = jwtUtil.createJwt("access", user.getId(), user.getUsername(), user.getRole(), 10 * 60 * 1000L); // 10분
+        String refreshToken = jwtUtil.createJwt("refresh", user.getId(),user.getUsername(), user.getRole(), 24 * 60 * 60 * 1000L); // 1일
 
         String redisRefreshKey = "refresh:userId:" + user.getId();
         stringRedisTemplate.opsForValue().set(redisRefreshKey, refreshToken, 1, TimeUnit.DAYS);
@@ -92,8 +92,8 @@ public class UserCommandService {
         stringRedisTemplate.delete(redisRefreshKey);
 
         // access, refresh 모두 재발급
-        String newAccessToken = jwtUtil.createJwt("access", user.getUsername(), jwtUtil.getRole(refreshToken), 10 * 60 * 1000L);
-        String newRefreshToken = jwtUtil.createJwt("refresh", user.getUsername(), jwtUtil.getRole(refreshToken), 24 * 60 * 60 * 1000L);
+        String newAccessToken = jwtUtil.createJwt("access", user.getId(), user.getUsername(), jwtUtil.getRole(refreshToken), 10 * 60 * 1000L);
+        String newRefreshToken = jwtUtil.createJwt("refresh", user.getId(), user.getUsername(), jwtUtil.getRole(refreshToken), 24 * 60 * 60 * 1000L);
 
         // new refresh 1 day 유지
         stringRedisTemplate.opsForValue().set(redisRefreshKey, newRefreshToken, 1, TimeUnit.DAYS);

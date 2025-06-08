@@ -1,11 +1,12 @@
 package com.osolar.obot.domain.chat.controller;
 
+import com.osolar.obot.common.annotation.CurrentUser;
 import com.osolar.obot.common.apiPayload.success.SuccessApiResponse;
 import com.osolar.obot.domain.chat.dto.response.SessionResponse;
+import com.osolar.obot.domain.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import com.osolar.obot.domain.chat.dto.request.ChatUserRequest;
-import com.osolar.obot.domain.chat.dto.response.ChatUserResponse;
 import com.osolar.obot.domain.chat.service.StreamingService;
 //import com.osolar.obot.external.gemini.GeminiService;
 import lombok.RequiredArgsConstructor;
@@ -33,28 +34,43 @@ public class StreamingController {
         return SuccessApiResponse.CreateSession(sessionResponse);
     }
 
-    @Operation(summary = "[스트리밍] 챗봇 응답 스트리밍 API")
-    @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+//    @Operation(summary = "[스트리밍] 챗봇 응답 스트리밍 API")
+//    @GetMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+//    public SseEmitter streamResponseByPrompt(
+//            @RequestParam String prompt,
+//            @RequestParam String access
+//    ) {
+//        log.info("[StreamingController - streamResponse]");
+//
+//        SseEmitter emitter = new SseEmitter(180_000L); // 3분으로 설정
+//        //geminiService.streamResponseByPrompt(prompt, emitter, access);
+//
+//        return emitter;
+//    }
+
+//    @Operation(summary = "[WebClient] 챗봇 응답 반환 API")
+//    @PostMapping("/chat/basic")
+//    public SuccessApiResponse<ChatUserResponse> getBasicResponse(
+//        @RequestParam String sessionId,
+//        @RequestBody ChatUserRequest chatUserRequest
+//    ) {
+//        ChatUserResponse chatUserResponse = streamingService.getBasicResponse(sessionId, chatUserRequest);
+//        return SuccessApiResponse.GetResponse(chatUserResponse);
+//    }
+
+    @Operation(summary = "[WebSocket] 챗봇 스트리밍 응답 반환 API")
+    @PostMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter streamResponseByPrompt(
-            @RequestParam String prompt,
-            @RequestParam String access
+            @RequestParam String sessionId,
+            @RequestBody ChatUserRequest chatUserRequest,
+            @CurrentUser User currentUser
     ) {
-        log.info("[StreamingController - streamResponse]");
+        log.info("[StreamingController - streamResponseByPrompt] sessionId = {}, question = {}", sessionId, chatUserRequest.getQuestion());
 
         SseEmitter emitter = new SseEmitter(180_000L); // 3분으로 설정
-        //geminiService.streamResponseByPrompt(prompt, emitter, access);
+        streamingService.getStreamResponse(emitter, sessionId, chatUserRequest, currentUser.getUsername());
 
         return emitter;
     }
-
-    @Operation(summary = "[WebClient] 챗봇 응답 반환 API")
-    @PostMapping("/chat/basic")
-    public SuccessApiResponse<ChatUserResponse> getBasicResponse(
-        @RequestParam String sessionId, @RequestBody ChatUserRequest chatUserRequest
-    ) {
-        ChatUserResponse chatUserResponse = streamingService.getBasicResponse(sessionId, chatUserRequest);
-        return SuccessApiResponse.GetResponse(chatUserResponse);
-    }
-
 
 }

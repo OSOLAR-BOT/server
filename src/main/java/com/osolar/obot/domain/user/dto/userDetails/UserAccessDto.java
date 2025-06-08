@@ -5,11 +5,13 @@ import lombok.Getter;
 
 @Getter
 public class UserAccessDto {
+    private String userId;
     private String username;
     private String role;
 
     @Builder
-    public UserAccessDto(String username, String role) {
+    public UserAccessDto(String userId, String username, String role) {
+        this.userId = userId;
         this.username = username;
         this.role = role;
     }

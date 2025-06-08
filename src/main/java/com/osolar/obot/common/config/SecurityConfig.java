@@ -62,8 +62,6 @@ public class SecurityConfig {
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        http
-                .securityMatcher(request -> !request.getRequestURI().equals("/api/chat/stream"));
 
         return http.build();
     }
