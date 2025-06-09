@@ -12,6 +12,7 @@ import com.osolar.obot.domain.chat.service.StreamingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -60,6 +61,7 @@ public class StreamingController {
 
     @Operation(summary = "[WebSocket] 챗봇 스트리밍 응답 반환 API")
     @PostMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public SseEmitter streamResponseByPrompt(
             @RequestParam String sessionId,
             @RequestBody ChatUserRequest chatUserRequest,

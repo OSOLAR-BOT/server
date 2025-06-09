@@ -4,7 +4,7 @@ import com.osolar.obot.common.apiPayload.failure.customException.UserException;
 import com.osolar.obot.domain.user.dto.request.RegisterRequest;
 import com.osolar.obot.domain.user.dto.response.LoginResponse;
 import com.osolar.obot.domain.user.entity.User;
-import com.osolar.obot.domain.user.jwt.JWTUtil;
+import com.osolar.obot.common.util.JWTUtil;
 import com.osolar.obot.domain.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +15,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +60,8 @@ public class UserCommandService {
         log.info("Access Token: "+ accessToken);
         httpServletResponse.setHeader("Set-Cookie", getResponseCookie(refreshToken));
 
+        log.info(accessToken);
+        log.info(user.getId());
 
         return LoginResponse.builder()
                 .userId(user.getId())

@@ -1,6 +1,7 @@
-package com.osolar.obot.domain.user.jwt;
+package com.osolar.obot.common.filter;
 
 import com.osolar.obot.common.apiPayload.failure.customException.JWTException;
+import com.osolar.obot.common.util.JWTUtil;
 import com.osolar.obot.domain.user.dto.userDetails.RoleUserDetails;
 import com.osolar.obot.domain.user.dto.userDetails.UserAccessDto;
 import jakarta.servlet.FilterChain;
@@ -51,19 +52,8 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-//    private String resolveToken(HttpServletRequest request, String prefix) {
-//        String access = request.getHeader("Authorization");
-//
-//        if (access == null || !access.startsWith(prefix)) {
-//            return request.getParameter("access"); // SSE 요청에서 사용
-//        }
-//
-//        System.out.println("access: " + access);
-//        return access.substring(prefix.length()).trim();
-//    }
     private String resolveToken(HttpServletRequest request, String prefix) {
         String access = request.getHeader("Authorization");
-        log.info("Authorization Header: {}", access);
 
         if (access == null || !access.startsWith(prefix)) {
             String tokenFromParam = request.getParameter("access");
@@ -72,13 +62,11 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         String token = access.substring(prefix.length()).trim();
-        log.info("Resolved Token: {}", token);
         return token;
     }
 
 
     private boolean isValidToken(String access) {
-        System.out.println("isValidToken : " + access );
         // access 토큰이 존재하지 않는 경우 검증 skip 후 false 반환
         // access 토큰이 존재하는 경우 검증 결과 반환
         return access != null && validateToken(access);

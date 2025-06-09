@@ -7,7 +7,7 @@
 //import com.osolar.obot.domain.user.entity.SessionStatus;
 //import com.osolar.obot.domain.user.entity.User;
 //import com.osolar.obot.domain.user.entity.UserSession;
-//import com.osolar.obot.domain.user.jwt.JWTUtil;
+//import com.osolar.obot.common.util.JWTUtil;
 //import com.osolar.obot.domain.user.repository.UserRepository;
 //import com.osolar.obot.domain.user.repository.UserSessionRepository;
 //import lombok.RequiredArgsConstructor;

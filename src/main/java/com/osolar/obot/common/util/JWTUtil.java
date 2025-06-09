@@ -1,12 +1,7 @@
-package com.osolar.obot.domain.user.jwt;
+package com.osolar.obot.common.util;
 
-
-import com.osolar.obot.common.apiPayload.failure.customException.UserException;
-import com.osolar.obot.common.apiPayload.failure.customExceptionStatus.UserExceptionStatus;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -73,6 +68,26 @@ public class JWTUtil {
         }
         // 3. cookie refresh - redis refresh 다름
         if (!cookieRefresh.equals(redisRefresh)){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isValidAccessToken(String accessToken){
+
+        // 0. access 토큰 아님
+        if(!getCategory(accessToken).equals("access")){
+            System.out.println(" is not valid");
+            return false;
+        }
+        // 1. access 없음
+        if (accessToken == null){
+            System.out.println(" is null");
+            return false;
+        }
+        // 2. access 만료
+        if (isExpired(accessToken)){
+            System.out.println(" is expired");
             return false;
         }
         return true;
