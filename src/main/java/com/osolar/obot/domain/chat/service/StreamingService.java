@@ -12,8 +12,7 @@ import com.osolar.obot.domain.user.entity.User;
 import com.osolar.obot.domain.user.entity.UserSession;
 import com.osolar.obot.domain.user.repository.UserRepository;
 import com.osolar.obot.domain.user.repository.UserSessionRepository;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +23,6 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
