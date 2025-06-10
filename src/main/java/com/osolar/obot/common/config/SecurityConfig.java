@@ -1,7 +1,8 @@
 package com.osolar.obot.common.config;
 
-import com.osolar.obot.domain.user.jwt.JWTFilter;
-import com.osolar.obot.domain.user.jwt.JWTUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.osolar.obot.common.filter.JWTFilter;
+import com.osolar.obot.common.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,12 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -28,15 +23,11 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JWTUtil jwtUtil;
-    private final ObjectMapper objectMapper;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         //csrf disable
         http.csrf((auth) -> auth.disable());
-
-        // cors
-        http.cors(cors -> {});
 
         //Form 로그인 방식 disable
         http.formLogin((auth) -> auth.disable());
@@ -84,18 +75,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(new ArrayList<>());
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
     }
 }
