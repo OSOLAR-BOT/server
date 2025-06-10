@@ -28,9 +28,6 @@ public class SecurityConfig {
         //csrf disable
         http.csrf((auth) -> auth.disable());
 
-        // cors
-        http.cors(cors -> {});
-
         //Form 로그인 방식 disable
         http.formLogin((auth) -> auth.disable());
 
