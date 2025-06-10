@@ -4,7 +4,7 @@ import com.osolar.obot.common.apiPayload.failure.customException.UserException;
 import com.osolar.obot.domain.user.dto.request.RegisterRequest;
 import com.osolar.obot.domain.user.dto.response.LoginResponse;
 import com.osolar.obot.domain.user.entity.User;
-import com.osolar.obot.domain.user.jwt.JWTUtil;
+import com.osolar.obot.common.util.JWTUtil;
 import com.osolar.obot.domain.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +15,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -51,15 +50,18 @@ public class UserCommandService {
         log.info("[UserCommandService - issueToken]");
         User user = userRepository.findByUsername(username).orElseThrow(UserException.UsernameNotExistException::new);
 
-        String accessToken = jwtUtil.createJwt("access", user.getUsername(), user.getRole(), 10 * 60 * 1000L); // 10분
-        String refreshToken = jwtUtil.createJwt("refresh", user.getUsername(), user.getRole(), 24 * 60 * 60 * 1000L); // 1일
+        String accessToken = jwtUtil.createJwt("access", user.getId(), user.getUsername(), user.getRole(), 10 * 60 * 1000L); // 10분
+        String refreshToken = jwtUtil.createJwt("refresh", user.getId(),user.getUsername(), user.getRole(), 24 * 60 * 60 * 1000L); // 1일
 
         String redisRefreshKey = "refresh:userId:" + user.getId();
         stringRedisTemplate.opsForValue().set(redisRefreshKey, refreshToken, 1, TimeUnit.DAYS);
 
         httpServletResponse.setHeader("access", accessToken);
+        log.info("Access Token: "+ accessToken);
         httpServletResponse.setHeader("Set-Cookie", getResponseCookie(refreshToken));
 
+        log.info(accessToken);
+        log.info(user.getId());
 
         return LoginResponse.builder()
                 .userId(user.getId())
@@ -91,8 +93,8 @@ public class UserCommandService {
         stringRedisTemplate.delete(redisRefreshKey);
 
         // access, refresh 모두 재발급
-        String newAccessToken = jwtUtil.createJwt("access", user.getUsername(), jwtUtil.getRole(refreshToken), 10 * 60 * 1000L);
-        String newRefreshToken = jwtUtil.createJwt("refresh", user.getUsername(), jwtUtil.getRole(refreshToken), 24 * 60 * 60 * 1000L);
+        String newAccessToken = jwtUtil.createJwt("access", user.getId(), user.getUsername(), jwtUtil.getRole(refreshToken), 10 * 60 * 1000L);
+        String newRefreshToken = jwtUtil.createJwt("refresh", user.getId(), user.getUsername(), jwtUtil.getRole(refreshToken), 24 * 60 * 60 * 1000L);
 
         // new refresh 1 day 유지
         stringRedisTemplate.opsForValue().set(redisRefreshKey, newRefreshToken, 1, TimeUnit.DAYS);
