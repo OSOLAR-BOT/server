@@ -12,6 +12,4 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChatUserRequest {
     private String question;
-    private String accessKey;
-
 }

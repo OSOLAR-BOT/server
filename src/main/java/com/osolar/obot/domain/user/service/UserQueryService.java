@@ -4,6 +4,7 @@ import com.osolar.obot.common.apiPayload.failure.customException.UserException;
 import com.osolar.obot.domain.user.dto.request.LoginRequest;
 import com.osolar.obot.domain.user.entity.User;
 import com.osolar.obot.domain.user.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,5 +30,10 @@ public class UserQueryService {
         }
 
         return user.getUsername();
+    }
+
+    public User getUserById(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자 ID: " + userId));
     }
 }

@@ -1,6 +1,7 @@
-package com.osolar.obot.domain.user.jwt;
+package com.osolar.obot.common.filter;
 
 import com.osolar.obot.common.apiPayload.failure.customException.JWTException;
+import com.osolar.obot.common.util.JWTUtil;
 import com.osolar.obot.domain.user.dto.userDetails.RoleUserDetails;
 import com.osolar.obot.domain.user.dto.userDetails.UserAccessDto;
 import jakarta.servlet.FilterChain;
@@ -53,11 +54,17 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private String resolveToken(HttpServletRequest request, String prefix) {
         String access = request.getHeader("Authorization");
+
         if (access == null || !access.startsWith(prefix)) {
-            return request.getParameter("access"); // SSE 요청에서 사용
+            String tokenFromParam = request.getParameter("access");
+            log.info("Access Token from param: {}", tokenFromParam);
+            return tokenFromParam;
         }
-        return access.substring(prefix.length()).trim();
+
+        String token = access.substring(prefix.length()).trim();
+        return token;
     }
+
 
     private boolean isValidToken(String access) {
         // access 토큰이 존재하지 않는 경우 검증 skip 후 false 반환
@@ -87,13 +94,15 @@ public class JWTFilter extends OncePerRequestFilter {
         // 사용자 정보 추출
         String username = jwtUtil.getUsername(access);
         String role = jwtUtil.getRole(access);
+        String userId = jwtUtil.getUserId(access);
 
         UserAccessDto userAccessDto = UserAccessDto.builder()
+                .userId(userId)
                 .username(username)
                 .role(role)
                 .build();
 
-        // 인증 객체 생성 (USER, ADMIN 공통 처리)
+        // 인증 객체 생성
         RoleUserDetails roleUserDetails = new RoleUserDetails(userAccessDto);
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 roleUserDetails, null, roleUserDetails.getAuthorities());

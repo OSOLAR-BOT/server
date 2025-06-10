@@ -20,6 +20,7 @@ public class RoleUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(userAccessDto.getRole()));
     }
+    public String getUserId(){ return userAccessDto.getUserId();}
 
     @Override
     public String getPassword() {
