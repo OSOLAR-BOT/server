@@ -29,9 +29,10 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JWTUtil jwtUtil;
+    private final ObjectMapper objectMapper;
 
     @Bean
-    public CorsConfigurationSource corsFilter() {
+    public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
@@ -49,11 +50,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 
-        // cors
-        http.cors(cors -> cors.configurationSource(corsFilter()));
-
         //csrf disable
         http.csrf((auth) -> auth.disable());
+
+        // cors
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         //Form 로그인 방식 disable
         http.formLogin((auth) -> auth.disable());
@@ -82,12 +83,14 @@ public class SecurityConfig {
                                 "/api/health").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/v3/**", "GET")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**", "GET")).permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/api/chat/stream").authenticated()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().permitAll());
 
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-        http
-                .securityMatcher(request -> !request.getRequestURI().equals("/api/chat/stream"));
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new SSESecurityFilter(jwtUtil, objectMapper), JWTFilter.class);
+
 
         return http.build();
     }
