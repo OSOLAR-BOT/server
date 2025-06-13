@@ -47,7 +47,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
             // 클라이언트에 [DONE] 이전까지만 전송
             try {
-                sseEmitter.send(SseEmitter.event().data(beforeDone));
                 // [DONE] 메시지를 클라이언트에게 전송
                 sseEmitter.send(SseEmitter.event().data("[DONE]"));
             } catch (Exception e) {
